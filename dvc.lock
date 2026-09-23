@@ -21,10 +21,21 @@ stages:
       size: 26594597
     - path: src/model/train_collaborative.py
       hash: md5
-      md5: 92140b0e4bc67e10ab8e6327c22c1377
-      size: 3184
+      md5: 1a5f621e77b9fd525319e7f79c33dd8b
+      size: 3769
     outs:
     - path: models/collaborative_model.pkl
       hash: md5
-      md5: e72658ed23005a9ae4ec8ffa8e540734
-      size: 5674837
+      md5: cd54733ca95e733e610fb6774ac1345e
+      size: 13657268
+  evaluate_collaborative:
+    cmd: python -m src.model.evaluate_collaborative
+    deps:
+    - path: models/collaborative_model.pkl
+      hash: md5
+      md5: cd54733ca95e733e610fb6774ac1345e
+      size: 13657268
+    - path: src/model/evaluate_collaborative.py
+      hash: md5
+      md5: 05e617f120af6230c506ec248208f897
+      size: 2792

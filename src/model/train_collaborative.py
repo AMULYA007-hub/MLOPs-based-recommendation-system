@@ -4,6 +4,7 @@ import mlflow
 import mlflow.sklearn
 
 from sklearn.decomposition import TruncatedSVD
+from sklearn.model_selection import train_test_split
 from scipy.sparse import csr_matrix
 
 
@@ -19,7 +20,7 @@ mlflow.set_experiment("Movie_Recommendation_Collaborative")
 # Load Training Data
 # -----------------------------
 
-print("Loading ratings training data...")
+print("Loading ratings data...")
 
 ratings = pd.read_csv(
     "data/processed/ratings_training.csv"
@@ -29,11 +30,25 @@ print("Ratings shape:", ratings.shape)
 
 
 # -----------------------------
+# Train-Test Split
+# -----------------------------
+
+train_ratings, test_ratings = train_test_split(
+    ratings,
+    test_size=0.2,
+    random_state=42
+)
+
+print("Training ratings:", train_ratings.shape)
+print("Testing ratings:", test_ratings.shape)
+
+
+# -----------------------------
 # Create User-Movie Matrix
 # -----------------------------
 
-user_ids = ratings["user_id"].unique()
-movie_ids = ratings["movie_id"].unique()
+user_ids = train_ratings["user_id"].unique()
+movie_ids = train_ratings["movie_id"].unique()
 
 user_to_index = {
     user_id: index
@@ -45,9 +60,11 @@ movie_to_index = {
     for index, movie_id in enumerate(movie_ids)
 }
 
-rows = ratings["user_id"].map(user_to_index)
-cols = ratings["movie_id"].map(movie_to_index)
-values = ratings["rating"]
+
+rows = train_ratings["user_id"].map(user_to_index)
+cols = train_ratings["movie_id"].map(movie_to_index)
+values = train_ratings["rating"]
+
 
 rating_matrix = csr_matrix(
     (
@@ -60,14 +77,19 @@ rating_matrix = csr_matrix(
     )
 )
 
-print("User-movie matrix shape:", rating_matrix.shape)
+
+print(
+    "User-movie matrix shape:",
+    rating_matrix.shape
+)
 
 
 # -----------------------------
-# Train Model + MLflow Tracking
+# Train Model
 # -----------------------------
 
 n_components = 50
+
 
 with mlflow.start_run():
 
@@ -87,8 +109,13 @@ with mlflow.start_run():
     )
 
     mlflow.log_param(
-        "number_of_ratings",
-        len(ratings)
+        "training_ratings",
+        len(train_ratings)
+    )
+
+    mlflow.log_param(
+        "testing_ratings",
+        len(test_ratings)
     )
 
     svd = TruncatedSVD(
@@ -102,14 +129,20 @@ with mlflow.start_run():
 
     movie_latent_matrix = svd.components_.T
 
-    explained_variance = svd.explained_variance_ratio_.sum()
+
+    explained_variance = (
+        svd.explained_variance_ratio_.sum()
+    )
+
 
     mlflow.log_metric(
         "explained_variance",
         float(explained_variance)
     )
 
+
     print("SVD training completed!")
+
     print(
         "User latent matrix:",
         user_latent_matrix.shape
@@ -125,7 +158,10 @@ with mlflow.start_run():
         explained_variance
     )
 
-    # Save model data
+
+    # -----------------------------
+    # Save Model
+    # -----------------------------
 
     model_data = {
         "svd": svd,
@@ -134,8 +170,10 @@ with mlflow.start_run():
         "user_to_index": user_to_index,
         "movie_to_index": movie_to_index,
         "user_ids": user_ids,
-        "movie_ids": movie_ids
+        "movie_ids": movie_ids,
+        "test_ratings": test_ratings
     }
+
 
     with open(
         "models/collaborative_model.pkl",
@@ -147,11 +185,13 @@ with mlflow.start_run():
             file
         )
 
-        print("Collaborative model saved!")
 
-        print(
-            "Location:",
-            "models/collaborative_model.pkl"
-        )
+    print("Collaborative model saved!")
 
-    print("\nMLflow tracking completed successfully!")
+    print(
+        "Location:",
+        "models/collaborative_model.pkl"
+    )
+
+
+print("\nMLflow tracking completed successfully!")
