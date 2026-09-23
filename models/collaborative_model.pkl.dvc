@@ -1,0 +1,5 @@
+outs:
+- md5: e72658ed23005a9ae4ec8ffa8e540734
+  size: 5674837
+  hash: md5
+  path: collaborative_model.pkl

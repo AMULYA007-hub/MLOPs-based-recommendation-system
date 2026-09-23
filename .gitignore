@@ -5,3 +5,12 @@ __pycache__/
 .idea/
 .ipynb_checkpoints/
 *.log
+
+# Generated data
+data/processed/
+
+# MLflow local database
+mlflow.db
+
+# Trained model files
+models/*.pkl
