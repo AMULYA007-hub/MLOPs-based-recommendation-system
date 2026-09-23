@@ -14,9 +14,10 @@ stages:
       - src/model/train_collaborative.py
     outs:
       - models/collaborative_model.pkl
-
   evaluate_collaborative:
     cmd: python -m src.model.evaluate_collaborative
     deps:
       - models/collaborative_model.pkl
       - src/model/evaluate_collaborative.py
+    metrics:
+      - metrics/collaborative_metrics.json

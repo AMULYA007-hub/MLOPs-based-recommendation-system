@@ -37,5 +37,10 @@ stages:
       size: 13657268
     - path: src/model/evaluate_collaborative.py
       hash: md5
-      md5: 05e617f120af6230c506ec248208f897
-      size: 2792
+      md5: ac402b46e2f672d6697115de7e0c6f53
+      size: 3299
+    outs:
+    - path: metrics/collaborative_metrics.json
+      hash: md5
+      md5: 76573d833da239c0a353f1a148eeaf32
+      size: 67

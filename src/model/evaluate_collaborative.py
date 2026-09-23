@@ -1,4 +1,7 @@
 import pickle
+import json
+from pathlib import Path
+
 import numpy as np
 import mlflow
 
@@ -90,10 +93,39 @@ rmse = np.sqrt(
     )
 )
 
-
 mae = mean_absolute_error(
     actual_ratings,
     predicted_ratings
+)
+
+
+# -----------------------------
+# Save Metrics for DVC
+# -----------------------------
+
+Path("metrics").mkdir(
+    parents=True,
+    exist_ok=True
+)
+
+metrics = {
+    "rmse": float(rmse),
+    "mae": float(mae)
+}
+
+with open(
+    "metrics/collaborative_metrics.json",
+    "w"
+) as file:
+    json.dump(
+        metrics,
+        file,
+        indent=4
+    )
+
+print(
+    "\nMetrics saved for DVC:",
+    "metrics/collaborative_metrics.json"
 )
 
 
