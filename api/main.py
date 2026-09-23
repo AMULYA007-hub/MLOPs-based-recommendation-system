@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from src.model.predict import recommend_movies
 from src.model.predict_collaborative import recommend_for_user
-
+from src.model.hybrid_recommender import hybrid_recommend
 from database.session import get_db
 from database.models import Movie, Rating
 
@@ -125,5 +125,30 @@ def recommend_for_user_api(
 
     return {
         "user_id": user_id,
+        "recommendations": recommendations
+    }
+@app.get("/recommend/hybrid/{user_id}")
+def hybrid_recommendation(
+    user_id: int,
+    movie_title: str,
+    limit: int = 10
+):
+    recommendations = hybrid_recommend(
+        user_id=user_id,
+        movie_title=movie_title,
+        limit=limit
+    )
+
+    if not recommendations:
+        return {
+            "user_id": user_id,
+            "movie": movie_title,
+            "recommendations": [],
+            "message": "No hybrid recommendations available"
+        }
+
+    return {
+        "user_id": user_id,
+        "movie": movie_title,
         "recommendations": recommendations
     }

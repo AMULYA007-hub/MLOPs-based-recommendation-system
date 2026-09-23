@@ -21,8 +21,8 @@ stages:
       size: 26594597
     - path: src/model/train_collaborative.py
       hash: md5
-      md5: 1a5f621e77b9fd525319e7f79c33dd8b
-      size: 3769
+      md5: d36e58b1d6523e4c0a30a9db44c067f1
+      size: 4560
     outs:
     - path: models/collaborative_model.pkl
       hash: md5

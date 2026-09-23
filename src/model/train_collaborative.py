@@ -2,12 +2,30 @@ import pandas as pd
 import pickle
 import mlflow
 import mlflow.sklearn
+import mlflow.pyfunc
 
 from sklearn.decomposition import TruncatedSVD
 from sklearn.model_selection import train_test_split
 from scipy.sparse import csr_matrix
 
+class CollaborativeRecommendationModel(mlflow.pyfunc.PythonModel):
 
+    def load_context(self, context):
+
+        with open(
+            context.artifacts["model"],
+            "rb"
+        ) as file:
+
+            self.model_data = pickle.load(file)
+
+    def predict(
+        self,
+        context,
+        model_input
+    ):
+
+        return model_input
 # -----------------------------
 # MLflow Configuration
 # -----------------------------
@@ -184,6 +202,18 @@ with mlflow.start_run():
             model_data,
             file
         )
+    mlflow.log_artifact(
+        "models/collaborative_model.pkl",
+        artifact_path="model"
+    )
+    mlflow.pyfunc.log_model(
+        artifact_path="registered_model",
+        python_model=CollaborativeRecommendationModel(),
+        artifacts={
+            "model": "models/collaborative_model.pkl"
+        },
+        registered_model_name="MovieRecommendationCollaborative"
+    )
 
 
     print("Collaborative model saved!")

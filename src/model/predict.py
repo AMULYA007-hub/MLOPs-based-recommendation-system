@@ -65,29 +65,38 @@ def recommend_movies(title, number_of_recommendations=10):
         movie_indices_list
     ][
         ["movie_id", "title", "genres"]
+    ].copy()
+
+    recommendations["similarity_score"] = [
+        float(score[1])
+        for score in similarity_scores
     ]
 
     return recommendations.to_dict("records")
-
 
 # --------------------------------------------------
 # 3. Test recommendation
 # --------------------------------------------------
 
-test_movie = "Toy Story (1995)"
+if __name__ == "__main__":
 
-recommendations = recommend_movies(
-    test_movie,
-    5
-)
+    test_movie = "Toy Story (1995)"
 
-print("Recommendations for:", test_movie)
-
-for movie in recommendations:
-    print(
-        movie["movie_id"],
-        "-",
-        movie["title"],
-        "|",
-        movie["genres"]
+    recommendations = recommend_movies(
+        test_movie,
+        5
     )
+
+    print(
+        "Recommendations for:",
+        test_movie
+    )
+
+    for movie in recommendations:
+        print(
+            movie["movie_id"],
+            "-",
+            movie["title"],
+            "|",
+            movie["genres"]
+        )

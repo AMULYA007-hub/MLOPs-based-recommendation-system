@@ -14,3 +14,5 @@ mlflow.db
 
 # Trained model files
 models/*.pkl
+# Local MLflow artifacts
+mlartifacts/
