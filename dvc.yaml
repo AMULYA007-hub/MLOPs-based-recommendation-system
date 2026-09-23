@@ -1,0 +1,16 @@
+stages:
+
+  load_ratings:
+    cmd: python -m src.data.load_ratings_from_db
+    deps:
+      - src/data/load_ratings_from_db.py
+    outs:
+      - data/processed/ratings_training.csv
+
+  train_collaborative:
+    cmd: python -m src.model.train_collaborative
+    deps:
+      - data/processed/ratings_training.csv
+      - src/model/train_collaborative.py
+    outs:
+      - models/collaborative_model.pkl

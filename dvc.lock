@@ -1,0 +1,30 @@
+schema: '2.0'
+stages:
+  load_ratings:
+    cmd: python -m src.data.load_ratings_from_db
+    deps:
+    - path: src/data/load_ratings_from_db.py
+      hash: md5
+      md5: 650293373436a892bdef0ee323b347cb
+      size: 563
+    outs:
+    - path: data/processed/ratings_training.csv
+      hash: md5
+      md5: 76b37b5323c422154e4adf86d5eb85c9
+      size: 26594597
+  train_collaborative:
+    cmd: python -m src.model.train_collaborative
+    deps:
+    - path: data/processed/ratings_training.csv
+      hash: md5
+      md5: 76b37b5323c422154e4adf86d5eb85c9
+      size: 26594597
+    - path: src/model/train_collaborative.py
+      hash: md5
+      md5: 92140b0e4bc67e10ab8e6327c22c1377
+      size: 3184
+    outs:
+    - path: models/collaborative_model.pkl
+      hash: md5
+      md5: e72658ed23005a9ae4ec8ffa8e540734
+      size: 5674837
